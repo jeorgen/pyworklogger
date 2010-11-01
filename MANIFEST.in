@@ -1,0 +1,12 @@
+include *.txt
+include *.TXT
+include *.py
+include *.pyw
+include *.ini
+include *.val
+include MANIFEST
+include MANIFEST.in
+include *.gif
+include *.svg
+include *.ico
+include *.nsi

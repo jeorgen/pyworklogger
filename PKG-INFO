@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pykeylogger
+Version: 1.2.1
+Summary: Simple Python Keylogger
+Home-page: http://pykeylogger.sourceforge.net
+Author: Daniel Folkinshteyn
+Author-email: nanotube@users.sf.net
+License: GPL
+Description: UNKNOWN
+Platform: Windows NT/2000/XP/Vista, Linux
