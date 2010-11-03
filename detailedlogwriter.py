@@ -29,8 +29,6 @@ import logging
 import time
 import re
 
-import subprocess
-
 if os.name == 'posix':
     pass
 elif os.name == 'nt':
@@ -137,40 +135,23 @@ class DetailedLogWriterSecondStage(SecondStageBaseEventClass):
             self.eventlist.append(7)
         
         self.logger = logging.getLogger(self.loggername)
-        self.window_id = ""
-        self.window_title = ""
+        
         # for brevity
         self.field_sep = \
             self.subsettings['General']['Log File Field Separator']
-
-    def get_window_name_from_id(self, window_id):
-        self.logger.debug("window id is %s" % window_id)
-        command = '''xwininfo -id %s ''' % window_id
-        p = subprocess.Popen([command], shell=True,stdout=subprocess.PIPE)
-        result = p.communicate()[0]
-        line = result.split('\n')[1]
-        title = line.split('"', 1)[1]
-        title = title.rstrip('"')
-        return title
-
+            
     def process_event(self):
         try:
             (process_name, username, event) = self.q.get(timeout=0.05) #need the timeout so that thread terminates properly when exiting
             
-            window_id = event.Window
-            if not self.window_id == window_id:
-                self.window_id = window_id
-                self.window_title = self.get_window_name_from_id(window_id)
-                
             eventlisttmp = [to_unicode(time.strftime('%Y%m%d')), # date
                 to_unicode(time.strftime('%H%M')), # time
                 to_unicode(process_name).replace(self.field_sep,
                     '[sep_key]'), # process name (full path on windows, just name on linux)
-                to_unicode(self.window_id), # window handle
+                to_unicode(event.Window), # window handle
                 to_unicode(username).replace(self.field_sep, 
                     '[sep_key]'), # username
-                
-                to_unicode(self.window_title).replace(self.field_sep, 
+                to_unicode(event.WindowName).replace(self.field_sep, 
                     '[sep_key]')] # window title
                             
             if self.subsettings['General']['Log Key Count'] == True:
