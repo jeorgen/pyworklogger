@@ -72,7 +72,7 @@ class KeyLogger:
         self.parse_options() # stored in self.cmdoptions
         self.parse_config_file() # stored in self.settings
         self.parse_control_key()
-        self.NagscreenLogic()
+        #self.NagscreenLogic()
         self.process_settings()
         _settings['settings'] = self.settings
         _cmdoptions['cmdoptions'] = self.cmdoptions
