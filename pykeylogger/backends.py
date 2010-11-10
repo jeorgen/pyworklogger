@@ -1,11 +1,24 @@
 #pykeylogger.backends
+from Queue import Queue, Empty
+import time
+import subprocess
+
+from myutils import (_settings, _cmdoptions, OnDemandRotatingFileHandler,
+    to_unicode)
 
 import detailedlogwriter
 
 class MyDetailedLogWriterFirstStage(detailedlogwriter.DetailedLogWriterFirstStage):
     """ """
-    
-class DetailedLogWriterSecondStage(detailedlogwriter.DetailedLogWriterSecondStage):
+
+    def spawn_second_stage_thread(self): 
+        self.sst_q = Queue(0)
+        self.sst = MyDetailedLogWriterSecondStage(self.dir_lock, 
+                                                self.sst_q, self.loggername)
+                                                
+class MyDetailedLogWriterSecondStage(detailedlogwriter.DetailedLogWriterSecondStage):
+    #print "HEJ\n"
+    window_id = None
     def get_window_name_from_id(self, window_id):
         self.logger.debug("window id is %s" % window_id)
         command = '''xwininfo -id %s ''' % window_id
@@ -26,7 +39,7 @@ class DetailedLogWriterSecondStage(detailedlogwriter.DetailedLogWriterSecondStag
                 self.window_id = window_id
                 self.window_title = self.get_window_name_from_id(window_id)
                 
-            eventlisttmp = [detailedlogwriter.to_unicode(detailedlogwriter.time.strftime('%Y%m%d')), # date
+            eventlisttmp = ['hej',detailedlogwriter.to_unicode(detailedlogwriter.time.strftime('%Y%m%d')), # date
                 detailedlogwriter.to_unicode(time.strftime('%H%M')), # time
                 detailedlogwriter.to_unicode(process_name).replace(self.field_sep,
                     '[sep_key]'), # process name (full path on windows, just name on linux)
